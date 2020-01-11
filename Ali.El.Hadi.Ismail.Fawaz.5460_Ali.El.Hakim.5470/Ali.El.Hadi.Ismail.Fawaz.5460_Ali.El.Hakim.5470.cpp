@@ -34,16 +34,21 @@ class product
         int getquantity() const;
         loc getlocation() const;
         bool gettype() const;
+        void setname(string);
+        void setid(int);
+        float calculate_total_price() const;
 
         //for liquid type
         int getammount_in_liters() const;
         float getprice_per_liter() const;
-        bool getflammable() const;
+        bool isflammable() const;
+        void setters_liquids(int,float,bool);
 
         //for solid type
         int getnum_pieces() const;
         float getprice_per_piece() const;
-        bool getfragile() const;
+        bool isfragile() const;
+        void setters_solids(int,float,bool);
 };
 
 int main()
@@ -72,11 +77,30 @@ loc product::getlocation() const
     return a;
 }
 bool product::gettype() const {return type;}
+void product::setname(string n) {name=n;}
+void product::setid(int ID) {id=ID;}
+float product::calculate_total_price() const
+{
+    if(type) return num_pieces*price_per_piece;
+    else return ammount_in_liters*price_per_liter;
+}
 
 int product::getammount_in_liters() const {return ammount_in_liters;}
 float product::getprice_per_liter() const {return price_per_liter;}
-bool product::getflammable() const {return flammable;}
+bool product::isflammable() const {return flammable;}
+void product::setters_liquids(int amm,float price,bool flam)
+{
+    ammount_in_liters=amm;
+    price_per_liter=price;
+    flammable=flam;
+}
 
 int product::getnum_pieces() const {return num_pieces;}
 float product::getprice_per_piece() const {return price_per_piece;}
-bool product::getfragile() const {return fragile;}
+bool product::isfragile() const {return fragile;}
+void product::setters_solids(int num,float price,bool frag)
+{
+    num_pieces=num;
+    price_per_piece=price;
+    fragile=frag;
+}

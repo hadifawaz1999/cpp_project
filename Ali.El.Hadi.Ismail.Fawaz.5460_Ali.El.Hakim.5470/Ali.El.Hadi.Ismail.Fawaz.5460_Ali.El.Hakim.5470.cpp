@@ -78,7 +78,21 @@ int main()
     inventory a;
     a.load();
     a.save();
-    cout<<a.getUnitCount()<<endl<<a.getInventoryValue();
+    a.removeProduct(2);
+    a.save();
+    string s="p5";
+    int ID=5,q=3;
+    loc l;
+    l.block='E';
+    l.shelf=4;
+    bool t=true;
+    int first=4;
+    float second=100;
+    bool flag=true;
+    product p(s,ID,q,l.block,l.shelf,t);
+    p.setters_solids(first,second,flag);
+    a.add(p);
+    a.save();
     return 0;
 }
 
@@ -250,5 +264,4 @@ float inventory::getInventoryValue()
 void inventory::clearInventory()
 {
     for(int i=0;i<size;i++) delete(list[i]);
-    delete [] list;
 }

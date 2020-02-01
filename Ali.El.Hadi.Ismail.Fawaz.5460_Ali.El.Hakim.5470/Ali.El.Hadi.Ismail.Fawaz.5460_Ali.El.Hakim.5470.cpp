@@ -1,267 +1,172 @@
+#include "classes.h"
 #include <bits/stdc++.h>
 
 using namespace std;
 
-typedef struct location
-{
-    char block;
-    int shelf;
-}loc;
-
-class product
-{
-    private:
-        string name;
-        int id;
-        int quantity;
-        char block;
-        int shelf;
-        //type=true means its solid and liquid otherwise
-        bool type;
-
-        //for liquid type
-        int ammount_in_liters;
-        float price_per_liter;
-        bool flammable;
-
-        //for solid type
-        int num_pieces;
-        float price_per_piece;
-        bool fragile;
-    public:
-        product();
-        product(string,int,int,char,int,bool);
-        string getname() const;
-        int getid() const;
-        int getquantity() const;
-        loc getlocation() const;
-        bool gettype() const;
-
-        void setname(string);
-        void setid(int);
-        void changelocation(loc c);
-        float calculate_total_price() const;
-
-        //for liquid type
-        int getammount_in_liters() const;
-        float getprice_per_liter() const;
-        bool isflammable() const;
-        void setters_liquids(int,float,bool);
-
-        //for solid type
-        int getnum_pieces() const;
-        float getprice_per_piece() const;
-        bool isfragile() const;
-        void setters_solids(int,float,bool);
-};
-
-class inventory
-{
-    private:
-        product *list[1000];
-        int size;
-    public:
-        inventory();
-        void load();
-        void save();
-        void removeProduct(int);
-        void add(product&);
-        int getnewID();
-        int getProductCount(product&);
-        int getUnitCount();
-        float getInventoryValue();
-        void clearInventory();
-};
-
 int main()
 {
-    inventory a;
-    a.load();
-    a.save();
-    a.removeProduct(2);
-    a.save();
-    string s="p5";
-    int ID=5,q=3;
-    loc l;
-    l.block='E';
-    l.shelf=4;
-    bool t=true;
-    int first=4;
-    float second=100;
-    bool flag=true;
-    product p(s,ID,q,l.block,l.shelf,t);
-    p.setters_solids(first,second,flag);
-    a.add(p);
-    a.save();
-    return 0;
-}
-
-product::product()
-{
-    name="unknown";
-    id=-1;
-}
-
-product::product(string s,int ID,int q,char b,int sh,bool t)
-{
-    name=s;
-    id=ID;
-    quantity=q;
-    block=b;
-    shelf=sh;
-    type=t;
-}
-
-string product::getname() const {return name;}
-int product::getid() const {return id;}
-int product::getquantity() const {return quantity;}
-loc product::getlocation() const
-{
-    loc a;
-    a.block=block;
-    a.shelf=shelf;
-    return a;
-}
-bool product::gettype() const {return type;}
-
-void product::setname(string n) {name=n;}
-void product::setid(int ID) {id=ID;}
-void product::changelocation(loc c)
-{
-    block=c.block;
-    shelf=c.shelf;
-}
-float product::calculate_total_price() const
-{
-    if(type) return num_pieces*price_per_piece;
-    else return ammount_in_liters*price_per_liter;
-}
-
-int product::getammount_in_liters() const {return ammount_in_liters;}
-float product::getprice_per_liter() const {return price_per_liter;}
-bool product::isflammable() const {return flammable;}
-void product::setters_liquids(int amm,float price,bool flam)
-{
-    ammount_in_liters=amm;
-    price_per_liter=price;
-    flammable=flam;
-}
-
-int product::getnum_pieces() const {return num_pieces;}
-float product::getprice_per_piece() const {return price_per_piece;}
-bool product::isfragile() const {return fragile;}
-void product::setters_solids(int num,float price,bool frag)
-{
-    num_pieces=num;
-    price_per_piece=price;
-    fragile=frag;
-}
-
-inventory::inventory()
-{
-    size=0;
-}
-
-void inventory::load()
-{
-    ifstream f;
-    f.open("data.txt");
-    string s;
-    int ID,q;
-    loc l;
-    bool t;
-    int first;
-    float second;
-    bool flag;
-    f>>s>>ID>>q>>l.block>>l.shelf>>t>>first>>second>>flag;
-    while(!f.eof())
-    {
-        list[size]=new product(s,ID,q,l.block,l.shelf,t);
-        if(t) list[size]->setters_solids(first,second,flag);
-        else list[size]->setters_liquids(first,second,flag);
-        size+=1;
-        f>>s>>ID>>q>>l.block>>l.shelf>>t>>first>>second>>flag;
-    }
-    f.close();
-}
-
-void inventory::save()
-{
     ofstream f;
-    f.open("results.txt",ios::out | ios::trunc);
-    for(int i=0;i<size;i++)
+    string p_name;
+    int p_id,p_quantity;
+    loc p_loc;
+    string input_p_type;
+    bool p_type;
+    int p_first;
+    float p_second;
+    string input_is_or_not;
+    bool is_or_not;
+    string what_to_do;
+    do
     {
-        f<<list[i]->getname()<<" "<<list[i]->getid()<<" "<<list[i]->getquantity()<<" "<<list[i]->getlocation().block<<" "<<list[i]->getlocation().shelf<<" "<<list[i]->gettype()<<" ";
-        if(list[i]->gettype()) f<<list[i]->getnum_pieces()<<" "<<list[i]->getprice_per_piece()<<" "<<list[i]->isfragile()<<endl;
-        else f<<list[i]->getammount_in_liters()<<" "<<list[i]->getprice_per_liter()<<" "<<list[i]->isflammable()<<endl;
-    }
-    f.close();
-}
-
-void inventory::removeProduct(int x)
-{
-    int index=-1;
-    for(int i=0;i<size;i++) if(list[i]->getid()==x) {index=i; break;}
-    if(index==-1) cout<<"Product with ID:"<<x<<" is not found!."<<endl;
-    else if(index==size-1)
+        cout<<"Is your data ready in data.txt (Yes or No): ";
+        cin>>what_to_do;
+    }while(what_to_do!="Yes" && what_to_do!="No");
+    if(what_to_do == "No")
     {
-        size-=1;
-        delete(list[index]);
+        f.open("data.txt");
+        cout<<"First give us the data."<<endl;
+        cout<<"How many product do you want to ship to this inventory?"<<endl;
+        int num_p;
+        do
+        {
+            cout<<"number of products (must be positive) = ";
+            cin>>num_p;
+        } while(num_p<=0);
+        for(int i=1;i<=num_p;i++)
+        {
+            cout<<"Give us the name of the product #"<<i<<": ";
+            cin>>p_name;
+            f<<p_name<<" ";
+            do
+            {
+                cout<<"Give us the ID of the product (Must be positive): ";
+                cin>>p_id;
+            } while(p_id<=0);
+            f<<p_id<<" ";
+            do
+            {
+                cout<<"Give us the quantity of the product (must be positive): ";
+                cin>>p_quantity;
+            }while (p_quantity<=0);
+            f<<p_quantity<<" ";
+            cout<<"Give us which block you want to put the product: ";
+            cin>>p_loc.block;
+            f<<p_loc.block<<" ";
+            do
+            {
+                cout<<"Give us which shelf you want to put the product (must be positive): ";
+                cin>>p_loc.shelf;
+            } while (p_loc.shelf<0);
+            f<<p_loc.shelf<<" ";
+            do
+            {
+                cout<<"Give us the type of the product (solid or liquid): ";
+                cin>>input_p_type;
+            } while (input_p_type!="solid" && input_p_type!="liquid");
+            if(input_p_type == "solid") f<<1<<" ";
+            else f<<0<<" ";
+            do
+            {
+                if(input_p_type == "solid") cout<<"Give us the number of peices and the price per peice of the solid product(must be positive): ";
+                else cout<<"Give us the ammount in litters and the price per litter of the liquid product(must be positive): ";
+                cin>>p_first>>p_second;
+            } while (p_first<=0 || p_second<=0);
+            f<<p_first<<" "<<p_second<<" ";
+            do
+            {
+                if(input_p_type == "solid") cout<<"Give us the type of this solid product (fragile or nonfragile): ";
+                else cout<<"Give us the type of this liquid product (flammable or nonflammable): ";
+                cin>>input_is_or_not;
+            } while (input_is_or_not!="flammable" && input_is_or_not!="nonflammable" && input_is_or_not!="fragile" && input_is_or_not!="nonfragile");
+            if(input_is_or_not == "flammable" || input_is_or_not=="fragile") f<<1<<endl;
+            else f<<0<<endl;
+        }
+        f.close();
     }
-    else
+    inventory inv;
+    cout<<"Now we create your inventory"<<endl;
+    cout<<"You can do any of these operations"<<endl;
+    cout<<"1- Load : to load all the inventory products from data.txt to its locsation."<<endl;
+    cout<<"2- Save : to save all the inventory data into saved_data.txt ."<<endl;
+    cout<<"3- Add : to add a given product to your inventory."<<endl;
+    cout<<"4- Remove : to remove a product with its given id."<<endl;
+    cout<<"5- Unit_Count : to show you the number of quantities in all your inventory."<<endl;
+    cout<<"6- Inventory_Value : to show you the value of your inventory."<<endl;
+    cout<<"7- Clear : to clear your inventory."<<endl;
+    cout<<"8- Exit : to exit the program."<<endl;
+    while (1)
     {
-        for(int i=index;i<size-1;i++) list[i]=list[i+1];
-        size-=1;
+        string choice;
+        do
+        {
+            cout<<"Choose from the list: Load, Save, Add, Remove, Unit_Count, Inventory_Value, Clear or Exit: ";
+            cin>>choice;
+        } while (choice!="Load" && choice!="Save" && choice!="Add" && choice!="Remove" && choice!="Unit_Count" && choice!="Inventory_Value" && choice!="Clear" && choice!="Exit");
+
+        if(choice == "Load") inv.load();
+        else if(choice == "Save") inv.save();
+        else if(choice == "Add")
+        {
+            cout<<"Give us the name of the product: ";
+            cin>>p_name;
+            do
+            {
+                cout<<"Give us the ID of the product (Must be positive): ";
+                cin>>p_id;
+            } while(p_id<=0);
+            do
+            {
+                cout<<"Give us the quantity of the product (must be positive): ";
+                cin>>p_quantity;
+            }while (p_quantity<=0);
+            cout<<"Give us which block you want to put the product: ";
+            cin>>p_loc.block;
+            do
+            {
+                cout<<"Give us which shelf you want to put the product (must be positive): ";
+                cin>>p_loc.shelf;
+            } while (p_loc.shelf<0);
+            do
+            {
+                cout<<"Give us the type of the product (solid or liquid): ";
+                cin>>input_p_type;
+            } while (input_p_type!="solid" && input_p_type!="liquid");
+            if(input_p_type == "solid") p_type=1;
+            else p_type=0;
+            do
+            {
+                if(input_p_type == "solid") cout<<"Give us the number of peices and the price per peice of the solid product(must be positive): ";
+                else cout<<"Give us the ammount in litters and the price per litter of the liquid product(must be positive): ";
+                cin>>p_first>>p_second;
+            } while (p_first<=0 || p_second<=0);
+            do
+            {
+                if(input_p_type == "solid") cout<<"Give us the type of this solid product (fragile or nonfragile): ";
+                else cout<<"Give us the type of this liquid product (flammable or nonflammable): ";
+                cin>>input_is_or_not;
+            } while (input_is_or_not!="flammable" && input_is_or_not!="nonflammable" && input_is_or_not!="fragile" && input_is_or_not!="nonfragile");
+            if(input_is_or_not == "flammable" || input_is_or_not == "fragile") is_or_not=1;
+            else is_or_not=0;
+            product p(p_name,p_id,p_quantity,p_loc.block,p_loc.shelf,p_type);
+            if(p_type) p.setters_solids(p_first,p_second,is_or_not);
+            else p.setters_liquids(p_first,p_second,is_or_not);
+
+            inv.add(p);
+        }
+        else if(choice == "Remove")
+        {
+            do
+            {
+                cout<<"Give us ID to remove (must be positive): ";
+                cin>>p_id;
+            } while (p_id<=0);
+            inv.removeProduct(p_id);
+        }
+        else if(choice == "Unit_Count") cout<<"Unit count is: "<<inv.getUnitCount()<<endl;
+        else if(choice == "Inventory_Value") cout<<"Inventory value is: "<<inv.getInventoryValue()<<endl;
+        else if(choice == "Clear") inv.clearInventory();
+        else if(choice == "Exit") break;
     }
-}
-
-void inventory::add(product& p)
-{
-    list[size]=new product(p.getname(),p.getid(),p.getquantity(),p.getlocation().block,p.getlocation().shelf,p.gettype());
-    if(p.gettype()) list[size]->setters_solids(p.getnum_pieces(),p.getprice_per_piece(),p.isfragile());
-    else list[size]->setters_liquids(p.getammount_in_liters(),p.getprice_per_liter(),p.isflammable());
-    size+=1;
-}
-
-int inventory::getnewID()
-{
-
-    srand(time(0));
-    int ID=rand()%1000+1;
-    while(1)
-    {
-        int test=1;
-        for(int i=0;i<size;i++) if(list[i]->getid()==ID) {test=0; break;}
-        if(test) break;
-        srand(time(0));
-        int ID=rand()%1000+1;
-    }
-    return ID;
-}
-
-int inventory::getProductCount(product& p)
-{
-    int index=-1;
-    for(int i=0;i<size;i++) if(list[i]->getid()==p.getid()) {index=i; break;}
-    if(index==-1) return 0;
-    return list[index]->getquantity();
-}
-
-int inventory::getUnitCount()
-{
-    int sum=0;
-    for(int i=0;i<size;i++) sum+=list[i]->getquantity();
-    return sum;
-}
-
-float inventory::getInventoryValue()
-{
-    float sum=0;
-    for(int i=0;i<size;i++) sum+=list[i]->calculate_total_price();
-    return sum;
-}
-
-void inventory::clearInventory()
-{
-    for(int i=0;i<size;i++) delete(list[i]);
+    cout<<"Program has ended"<<endl;
+    return 0;
 }

@@ -40,8 +40,8 @@ void product::changelocation(loc c)
 }
 float product::calculate_total_price() const
 {
-    if(type) return num_pieces*price_per_piece;
-    else return ammount_in_liters*price_per_liter;
+    if(type) return num_pieces*price_per_piece*quantity;
+    else return ammount_in_liters*price_per_liter*quantity;
 }
 
 int product::getammount_in_liters() const {return ammount_in_liters;}
@@ -171,4 +171,5 @@ float inventory::getInventoryValue()
 void inventory::clearInventory()
 {
     for(int i=0;i<size;i++) delete(list[i]);
+    size=0;
 }

@@ -165,7 +165,23 @@ int main()
         else if(choice == "Unit_Count") cout<<"Unit count is: "<<inv.getUnitCount()<<endl;
         else if(choice == "Inventory_Value") cout<<"Inventory value is: "<<inv.getInventoryValue()<<endl;
         else if(choice == "Clear") inv.clearInventory();
-        else if(choice == "Exit") break;
+        else if(choice == "Exit")
+        {
+            ifstream f;
+            ofstream g;
+            f.open("saved_data.txt");
+            g.open("data.txt",ofstream::trunc);
+            
+            f>>p_name>>p_id>>p_quantity>>p_loc.block>>p_loc.shelf>>p_type>>p_first>>p_second>>is_or_not;
+            while(!f.eof())
+            {
+                g<<p_name<<" "<<p_id<<" "<<p_quantity<<" "<<p_loc.block<<" "<<p_loc.shelf<<" "<<p_type<<" "<<p_first<<" "<<p_second<<" "<<is_or_not<<endl;
+                f>>p_name>>p_id>>p_quantity>>p_loc.block>>p_loc.shelf>>p_type>>p_first>>p_second>>is_or_not;
+            }
+            f.close();
+            g.close();
+            break;
+        }
     }
     cout<<"Program has ended"<<endl;
     return 0;

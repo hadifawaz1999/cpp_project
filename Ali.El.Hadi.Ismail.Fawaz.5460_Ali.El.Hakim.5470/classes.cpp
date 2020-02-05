@@ -95,7 +95,7 @@ void inventory::load()
 void inventory::save()
 {
     ofstream f;
-    f.open("saved_data.txt",ios::out | ios::trunc);
+    f.open("saved_data.txt",ofstream::trunc);
     for(int i=0;i<size;i++)
     {
         f<<list[i]->getname()<<" "<<list[i]->getid()<<" "<<list[i]->getquantity()<<" "<<list[i]->getlocation().block<<" "<<list[i]->getlocation().shelf<<" "<<list[i]->gettype()<<" ";
